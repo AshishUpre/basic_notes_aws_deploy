@@ -1,0 +1,36 @@
+#version: '3.9'
+services:
+
+  # mongodb service -> name can be anything (here mongo_db)
+  mongo_db:
+    # container_name is optional
+    container_name: mongo_db_container
+    image: mongo:latest
+    # if it fails, always restart
+    restart: always
+    # if no volumes provided, when container stops, all data removed (no persistance)
+    # for mongodb, volume (path) exactly like this
+    volumes:
+      - mongo_db:/data/db
+
+  # node api service
+  api_service:
+    # looks for dockerfile at same level
+    build: .
+    ports: # 4k on local mapped to 3k on container
+      - 4000:3000
+
+    # ENV variables for the application
+    environment:
+      PORT: 3000
+      # instead of localhost, use name of mongodb service
+      MONGODB_URI: mongodb://mongo_db:27017
+      DB_NAME: notes_db
+      NAME: Hazardous
+
+    # starts mongodb before this
+    depends_on:
+      - mongo_db
+
+volumes:
+  mongo_db: {}

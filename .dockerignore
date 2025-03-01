@@ -1,0 +1,4 @@
+# ignore node modules from copying
+node_modules
+docker-compose.yml
+.dockerignore
